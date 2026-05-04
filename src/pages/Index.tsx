@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Settings, Power, Wifi, Volume2, Battery, Store, Folder, Download, Check, Play } from "lucide-react";
+import { Settings, Power, Wifi, Volume2, Battery, Store, Folder, Download, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
