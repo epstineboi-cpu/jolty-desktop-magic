@@ -227,9 +227,17 @@ const Index = () => {
   };
 
   const closeApp = (app: AppId) => {
-    setOpenApps(openApps.filter((a) => a !== app));
+    setOpenApps((prev) => prev.filter((a) => a !== app));
     setZOrder((prev) => prev.filter((a) => a !== app));
-    if (activeApp === app) setActiveApp(null);
+    setWindowStates((p) => ({
+      ...p,
+      [app]: { ...p[app], minimized: false, maximized: false },
+    }));
+    setActiveApp((cur) => {
+      if (cur !== app) return cur;
+      const remaining = zOrder.filter((a) => a !== app);
+      return remaining.length ? remaining[remaining.length - 1] : null;
+    });
   };
 
   const minimizeApp = (app: AppId) =>
