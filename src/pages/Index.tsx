@@ -451,28 +451,38 @@ const Index = () => {
         </div>
       )}
 
-      {/* Taskbar */}
-      <div className="glass-strong absolute bottom-0 left-0 right-0 z-20 flex h-12 items-center justify-between border-t border-white/10 px-3">
+      {/* Taskbar (Windows 11 style) */}
+      <div className="absolute bottom-0 left-0 right-0 z-20 flex h-12 items-center border-t border-white/10 bg-gradient-to-b from-zinc-900/85 to-zinc-950/95 px-3 backdrop-blur-2xl">
+        {/* Left spacer */}
+        <div className="flex-1" />
+
+        {/* Center cluster: Start + pinned + open windows */}
         <div className="flex items-center gap-1">
           <button
             onClick={() => setStartOpen(!startOpen)}
-            className="group relative flex h-9 w-9 items-center justify-center rounded-lg transition hover:bg-white/10"
+            className="group relative flex h-9 w-9 items-center justify-center rounded-md transition hover:bg-white/10"
             aria-label="Start"
+            title="Start"
           >
-            <span className="absolute inset-0 rounded-lg bg-gradient-to-br from-yellow-300/20 via-fuchsia-500/20 to-sky-400/20 opacity-0 blur-md transition group-hover:opacity-100" />
-            <span className="relative text-2xl font-black neon-text drop-shadow-[0_0_10px_rgba(168,85,247,0.6)]">⚡</span>
+            <span className="absolute inset-0 rounded-md bg-gradient-to-br from-yellow-300/20 via-fuchsia-500/20 to-sky-400/20 opacity-0 blur-md transition group-hover:opacity-100" />
+            <span className="relative text-xl font-black neon-text">⚡</span>
           </button>
-          {pinnedApps.map((app) => (
-            <button
-              key={`pin-${app.id}`}
-              onClick={() => setLaunchedApp(app)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg transition hover:bg-white/10 hover:scale-105"
-              title={app.name}
-            >
-              <img src={app.image} alt="" className="h-7 w-7 rounded-md object-cover ring-1 ring-white/30" />
-            </button>
-          ))}
-          {pinnedApps.length > 0 && <div className="mx-1 h-6 w-px bg-white/15" />}
+          {pinnedApps.map((app) => {
+            const isOpen = openApps.includes("store"); // visual hint only
+            return (
+              <button
+                key={`pin-${app.id}`}
+                onClick={() => setLaunchedApp(app)}
+                className="relative flex h-9 w-9 items-center justify-center rounded-md transition hover:bg-white/10"
+                title={app.name}
+              >
+                <img src={app.image} alt="" className="h-6 w-6 rounded-md object-cover" />
+                {isOpen && false && (
+                  <span className="absolute -bottom-0.5 left-1/2 h-0.5 w-3 -translate-x-1/2 rounded-full bg-sky-400" />
+                )}
+              </button>
+            );
+          })}
           {openApps.map((app) => {
             const isActive = activeApp === app && !windowStates[app].minimized;
             return (
@@ -482,20 +492,26 @@ const Index = () => {
                   if (windowStates[app].minimized || activeApp !== app) openApp(app);
                   else minimizeApp(app);
                 }}
-                className={`group relative flex h-9 items-center gap-2 rounded-lg px-3 text-sm capitalize transition hover:bg-white/10 ${
+                className={`relative flex h-9 w-9 items-center justify-center rounded-md transition hover:bg-white/10 ${
                   isActive ? "bg-white/15" : ""
                 }`}
+                title={app}
               >
                 {app === "settings" && <Settings className="h-4 w-4" />}
                 {app === "store" && <Store className="h-4 w-4" />}
                 {app === "files" && <Folder className="h-4 w-4" />}
-                <span>{app}</span>
-                <span className={`absolute -bottom-0.5 left-1/2 h-0.5 -translate-x-1/2 rounded-full bg-gradient-to-r from-yellow-300 to-fuchsia-500 transition-all ${isActive ? "w-6" : "w-1.5"}`} />
+                <span
+                  className={`absolute -bottom-0.5 left-1/2 h-[3px] -translate-x-1/2 rounded-full transition-all ${
+                    isActive ? "w-5 bg-sky-400" : "w-2 bg-white/40"
+                  }`}
+                />
               </button>
             );
           })}
         </div>
-        <div className="flex items-center gap-2 px-2 text-xs text-white">
+
+        {/* Right system tray */}
+        <div className="flex flex-1 items-center justify-end gap-1 text-xs text-white">
           <button onClick={toggleFullscreen} className="rounded-md p-1.5 hover:bg-white/10" title="Fullscreen">
             {osFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
           </button>
@@ -504,12 +520,14 @@ const Index = () => {
             <Volume2 className="h-3.5 w-3.5" />
             <Battery className="h-3.5 w-3.5" />
           </div>
-          <div className="rounded-md px-2 py-1 text-right leading-tight hover:bg-white/10">
-            <div className="font-medium">
+          <button className="rounded-md px-2.5 py-1 text-right leading-tight hover:bg-white/10">
+            <div className="text-[12px] font-medium tabular-nums">
               {time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
             </div>
-            <div className="text-[10px] opacity-70">{time.toLocaleDateString()}</div>
-          </div>
+            <div className="text-[10px] tabular-nums opacity-80">
+              {time.toLocaleDateString([], { month: "numeric", day: "numeric", year: "numeric" })}
+            </div>
+          </button>
         </div>
       </div>
     </div>
