@@ -30,9 +30,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import baldiClassicImg from "@/assets/baldi-classic.png";
-import baldiPlusImg from "@/assets/baldi-plus.png";
-import repoImg from "@/assets/repo.png";
+import cloverPitImg from "@/assets/clover-pit.png";
+import biteFreddyImg from "@/assets/bite-freddy.png";
+
+// Resolve a public-folder asset relative to the deployed base. Works in dev (/),
+// production (/), and offline file:// (./) builds.
+const asset = (p: string) => {
+  const base = import.meta.env.BASE_URL || "/";
+  return `${base.replace(/\/$/, "")}/${p.replace(/^\//, "")}`;
+};
 
 type StoreApp = {
   id: string;
