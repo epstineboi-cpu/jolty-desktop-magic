@@ -30,9 +30,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import baldiClassicImg from "@/assets/baldi-classic.png";
-import baldiPlusImg from "@/assets/baldi-plus.png";
-import repoImg from "@/assets/repo.png";
+import cloverPitImg from "@/assets/clover-pit.png";
+import biteFreddyImg from "@/assets/bite-freddy.png";
+
+// Resolve a public-folder asset relative to the deployed base. Works in dev (/),
+// production (/), and offline file:// (./) builds.
+const asset = (p: string) => {
+  const base = import.meta.env.BASE_URL || "/";
+  return `${base.replace(/\/$/, "")}/${p.replace(/^\//, "")}`;
+};
 
 type StoreApp = {
   id: string;
@@ -48,37 +54,26 @@ type StoreApp = {
 
 const STORE_APPS: StoreApp[] = [
   {
-    id: "repo",
-    name: "R.E.P.O.",
-    developer: "semiwork",
-    size: "210 MB",
-    image: repoImg,
-    url: "/apps/repo.html",
-    tagline: "Cooperative horror, salvage the unspeakable.",
-    rating: 4.9,
-    accent: "from-amber-400 via-rose-500 to-fuchsia-700",
-  },
-  {
-    id: "baldi-plus",
-    name: "Baldi's Basics Plus",
-    developer: "Basically Games",
-    size: "315 MB",
-    image: baldiPlusImg,
-    url: "/apps/baldi-plus.html",
-    tagline: "Procedural schoolhouse chaos, expanded.",
-    rating: 4.7,
-    accent: "from-emerald-400 via-lime-500 to-yellow-400",
-  },
-  {
-    id: "baldi-classic",
-    name: "Baldi's Basics Classic Remastered",
-    developer: "Basically Games",
-    size: "84 MB",
-    image: baldiClassicImg,
-    url: "/apps/baldi-classic.html",
-    tagline: "The original nightmare, polished.",
+    id: "clover-pit",
+    name: "Clover Pit",
+    developer: "Panik Arcade",
+    size: "87 MB",
+    image: cloverPitImg,
+    url: asset("apps/clover-pit.html"),
+    tagline: "Pull the lever. Pray the reels are kind.",
     rating: 4.8,
-    accent: "from-rose-400 via-red-500 to-amber-500",
+    accent: "from-rose-500 via-red-600 to-amber-500",
+  },
+  {
+    id: "bite-freddy",
+    name: "A Bite at Freddy's",
+    developer: "FNaF Fan Studio",
+    size: "120 MB",
+    image: biteFreddyImg,
+    url: asset("apps/bite-freddy.html"),
+    tagline: "Survive the night shift. Don't get bitten.",
+    rating: 4.6,
+    accent: "from-amber-700 via-red-800 to-zinc-900",
   },
 ];
 
@@ -283,7 +278,7 @@ const Index = () => {
   return (
     <div ref={rootRef} className="relative h-screen w-screen overflow-hidden font-sans text-foreground">
       <video autoPlay loop muted playsInline className="absolute inset-0 h-full w-full object-cover">
-        <source src="/wallpaper.mp4" type="video/mp4" />
+        <source src={asset("wallpaper.mp4")} type="video/mp4" />
       </video>
       <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/10 to-purple-950/40" />
 
@@ -456,28 +451,38 @@ const Index = () => {
         </div>
       )}
 
-      {/* Taskbar */}
-      <div className="glass-strong absolute bottom-0 left-0 right-0 z-20 flex h-12 items-center justify-between border-t border-white/10 px-3">
+      {/* Taskbar (Windows 11 style) */}
+      <div className="absolute bottom-0 left-0 right-0 z-20 flex h-12 items-center border-t border-white/10 bg-gradient-to-b from-zinc-900/85 to-zinc-950/95 px-3 backdrop-blur-2xl">
+        {/* Left spacer */}
+        <div className="flex-1" />
+
+        {/* Center cluster: Start + pinned + open windows */}
         <div className="flex items-center gap-1">
           <button
             onClick={() => setStartOpen(!startOpen)}
-            className="group relative flex h-9 w-9 items-center justify-center rounded-lg transition hover:bg-white/10"
+            className="group relative flex h-9 w-9 items-center justify-center rounded-md transition hover:bg-white/10"
             aria-label="Start"
+            title="Start"
           >
-            <span className="absolute inset-0 rounded-lg bg-gradient-to-br from-yellow-300/20 via-fuchsia-500/20 to-sky-400/20 opacity-0 blur-md transition group-hover:opacity-100" />
-            <span className="relative text-2xl font-black neon-text drop-shadow-[0_0_10px_rgba(168,85,247,0.6)]">⚡</span>
+            <span className="absolute inset-0 rounded-md bg-gradient-to-br from-yellow-300/20 via-fuchsia-500/20 to-sky-400/20 opacity-0 blur-md transition group-hover:opacity-100" />
+            <span className="relative text-xl font-black neon-text">⚡</span>
           </button>
-          {pinnedApps.map((app) => (
-            <button
-              key={`pin-${app.id}`}
-              onClick={() => setLaunchedApp(app)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg transition hover:bg-white/10 hover:scale-105"
-              title={app.name}
-            >
-              <img src={app.image} alt="" className="h-7 w-7 rounded-md object-cover ring-1 ring-white/30" />
-            </button>
-          ))}
-          {pinnedApps.length > 0 && <div className="mx-1 h-6 w-px bg-white/15" />}
+          {pinnedApps.map((app) => {
+            const isOpen = openApps.includes("store"); // visual hint only
+            return (
+              <button
+                key={`pin-${app.id}`}
+                onClick={() => setLaunchedApp(app)}
+                className="relative flex h-9 w-9 items-center justify-center rounded-md transition hover:bg-white/10"
+                title={app.name}
+              >
+                <img src={app.image} alt="" className="h-6 w-6 rounded-md object-cover" />
+                {isOpen && false && (
+                  <span className="absolute -bottom-0.5 left-1/2 h-0.5 w-3 -translate-x-1/2 rounded-full bg-sky-400" />
+                )}
+              </button>
+            );
+          })}
           {openApps.map((app) => {
             const isActive = activeApp === app && !windowStates[app].minimized;
             return (
@@ -487,20 +492,26 @@ const Index = () => {
                   if (windowStates[app].minimized || activeApp !== app) openApp(app);
                   else minimizeApp(app);
                 }}
-                className={`group relative flex h-9 items-center gap-2 rounded-lg px-3 text-sm capitalize transition hover:bg-white/10 ${
+                className={`relative flex h-9 w-9 items-center justify-center rounded-md transition hover:bg-white/10 ${
                   isActive ? "bg-white/15" : ""
                 }`}
+                title={app}
               >
                 {app === "settings" && <Settings className="h-4 w-4" />}
                 {app === "store" && <Store className="h-4 w-4" />}
                 {app === "files" && <Folder className="h-4 w-4" />}
-                <span>{app}</span>
-                <span className={`absolute -bottom-0.5 left-1/2 h-0.5 -translate-x-1/2 rounded-full bg-gradient-to-r from-yellow-300 to-fuchsia-500 transition-all ${isActive ? "w-6" : "w-1.5"}`} />
+                <span
+                  className={`absolute -bottom-0.5 left-1/2 h-[3px] -translate-x-1/2 rounded-full transition-all ${
+                    isActive ? "w-5 bg-sky-400" : "w-2 bg-white/40"
+                  }`}
+                />
               </button>
             );
           })}
         </div>
-        <div className="flex items-center gap-2 px-2 text-xs text-white">
+
+        {/* Right system tray */}
+        <div className="flex flex-1 items-center justify-end gap-1 text-xs text-white">
           <button onClick={toggleFullscreen} className="rounded-md p-1.5 hover:bg-white/10" title="Fullscreen">
             {osFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
           </button>
@@ -509,12 +520,14 @@ const Index = () => {
             <Volume2 className="h-3.5 w-3.5" />
             <Battery className="h-3.5 w-3.5" />
           </div>
-          <div className="rounded-md px-2 py-1 text-right leading-tight hover:bg-white/10">
-            <div className="font-medium">
+          <button className="rounded-md px-2.5 py-1 text-right leading-tight hover:bg-white/10">
+            <div className="text-[12px] font-medium tabular-nums">
               {time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
             </div>
-            <div className="text-[10px] opacity-70">{time.toLocaleDateString()}</div>
-          </div>
+            <div className="text-[10px] tabular-nums opacity-80">
+              {time.toLocaleDateString([], { month: "numeric", day: "numeric", year: "numeric" })}
+            </div>
+          </button>
         </div>
       </div>
     </div>
@@ -866,7 +879,7 @@ const FilesContent = ({
           <Breadcrumb path={["Jolt", "Media"]} />
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
             <div className="overflow-hidden rounded-2xl border border-white/10">
-              <video src="/wallpaper.mp4" muted loop autoPlay playsInline className="h-32 w-full object-cover" />
+              <video src={asset("wallpaper.mp4")} muted loop autoPlay playsInline className="h-32 w-full object-cover" />
               <div className="p-2 text-xs">wallpaper.mp4</div>
             </div>
           </div>
