@@ -388,20 +388,27 @@ const Index = () => {
 
       {/* Launched app fullscreen */}
       {launchedApp && (
-        <div className="absolute inset-0 z-40 flex flex-col bg-black">
-          <div className="flex h-9 items-center justify-between border-b border-white/10 bg-background/80 px-3 backdrop-blur">
+        <div className="absolute inset-0 z-50 flex flex-col bg-black">
+          <div className="flex h-12 shrink-0 items-center justify-between border-b border-white/10 bg-background/90 px-4 backdrop-blur">
             <div className="flex items-center gap-2">
-              <img src={launchedApp.image} alt="" className="h-5 w-5 rounded object-cover" />
-              <span className="text-sm font-medium">{launchedApp.name}</span>
+              <img src={launchedApp.image} alt="" className="h-6 w-6 rounded object-cover" />
+              <span className="text-base font-semibold">{launchedApp.name}</span>
             </div>
             <button
               onClick={() => setLaunchedApp(null)}
-              className="flex h-6 w-6 items-center justify-center rounded hover:bg-destructive hover:text-destructive-foreground"
+              className="flex h-9 min-w-[80px] items-center justify-center gap-2 rounded-md bg-destructive px-3 text-sm font-semibold text-destructive-foreground hover:opacity-90"
             >
-              ✕
+              ✕ Close
             </button>
           </div>
           <iframe src={launchedApp.url} title={launchedApp.name} className="flex-1 border-0" />
+          <button
+            onClick={() => setLaunchedApp(null)}
+            aria-label="Close app"
+            className="fixed right-3 top-3 z-[60] flex h-10 w-10 items-center justify-center rounded-full bg-destructive text-lg font-bold text-destructive-foreground shadow-xl ring-2 ring-white/30 hover:scale-105"
+          >
+            ✕
+          </button>
         </div>
       )}
 
