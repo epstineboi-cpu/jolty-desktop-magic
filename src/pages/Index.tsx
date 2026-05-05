@@ -278,7 +278,7 @@ const Index = () => {
   return (
     <div ref={rootRef} className="relative h-screen w-screen overflow-hidden font-sans text-foreground">
       <video autoPlay loop muted playsInline className="absolute inset-0 h-full w-full object-cover">
-        <source src="/wallpaper.mp4" type="video/mp4" />
+        <source src={asset("wallpaper.mp4")} type="video/mp4" />
       </video>
       <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/10 to-purple-950/40" />
 
@@ -861,7 +861,7 @@ const FilesContent = ({
           <Breadcrumb path={["Jolt", "Media"]} />
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
             <div className="overflow-hidden rounded-2xl border border-white/10">
-              <video src="/wallpaper.mp4" muted loop autoPlay playsInline className="h-32 w-full object-cover" />
+              <video src={asset("wallpaper.mp4")} muted loop autoPlay playsInline className="h-32 w-full object-cover" />
               <div className="p-2 text-xs">wallpaper.mp4</div>
             </div>
           </div>
